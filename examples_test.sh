@@ -49,14 +49,14 @@ pass () {
 }
 
 EXAMPLES=(
-    # "helloworld"
-    # "route_guide"
-    # "features/authentication"
-    # "features/compression"
-    # "features/deadline"
-    # "features/encryption/TLS"
-    # "features/errors"
-    # "features/interceptor"
+    "helloworld"
+    "route_guide"
+    "features/authentication"
+    "features/compression"
+    "features/deadline"
+    "features/encryption/TLS"
+    "features/errors"
+    "features/interceptor"
     "features/load_balancing"
     "features/metadata"
     "features/multiplex"
