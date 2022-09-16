@@ -51,7 +51,7 @@ pass () {
 EXAMPLES=(
     "helloworld"
     "route_guide"
-    # "features/authentication"
+    "features/authentication"
     # "features/compression"
     # "features/deadline"
     # "features/encryption/TLS"
