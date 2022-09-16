@@ -1,6 +1,6 @@
 /*
  *
- * Copyright 2015 gRPC authors.
+ * Copyright 2018 gRPC authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
  *
  */
 
-// Package main implements a server for Greeter service.
+// Binary server is an example server.
 package main
 
 import (
@@ -27,42 +27,37 @@ import (
 	"net"
 
 	"google.golang.org/grpc"
-	// pb "github.com/deltavoid/golang-grpc_examples/helloworld/helloworld"
-	pb "github.com/deltavoid/golang-grpc_examples/helloworld/helloworld"
+	"google.golang.org/grpc/credentials/alts"
+
+	pb "github.com/deltavoid/golang-grpc_examples/features/proto/echo"
 )
 
-var (
-	port = flag.Int("port", 50051, "The server port")
-)
+var port = flag.Int("port", 50051, "the port to serve on")
 
-// server is used to implement helloworld.GreeterServer.
-type server struct {
-	pb.UnimplementedGreeterServer
+type ecServer struct {
+	pb.UnimplementedEchoServer
 }
 
-// SayHello implements helloworld.GreeterServer
-func (s *server) SayHello(ctx context.Context, in *pb.HelloRequest) (*pb.HelloReply, error) {
-
-	log.Printf("Received: %v", in.GetName())
-
-	return &pb.HelloReply{Message: "Hello " + in.GetName()}, nil
+func (s *ecServer) UnaryEcho(ctx context.Context, req *pb.EchoRequest) (*pb.EchoResponse, error) {
+	return &pb.EchoResponse{Message: req.Message}, nil
 }
 
 func main() {
-
 	flag.Parse()
 
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", *port))
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
+	// Create alts based credential.
+	altsTC := alts.NewServerCreds(alts.DefaultServerOptions())
 
-	s := grpc.NewServer()
-	pb.RegisterGreeterServer(s, &server{})
+	s := grpc.NewServer(grpc.Creds(altsTC))
 
-	log.Printf("server listening at %v", lis.Addr())
+	// Register EchoServer on the server.
+	pb.RegisterEchoServer(s, &ecServer{})
+
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}
-
 }

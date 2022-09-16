@@ -56,12 +56,12 @@ EXAMPLES=(
     # "features/deadline"
     # "features/encryption/TLS"
     # "features/errors"
-    "features/interceptor"
-    # "features/load_balancing"
-    # "features/metadata"
-    # "features/multiplex"
-    # "features/name_resolving"
-    # "features/unix_abstract"
+    # "features/interceptor"
+    "features/load_balancing"
+    "features/metadata"
+    "features/multiplex"
+    "features/name_resolving"
+    "features/unix_abstract"
 )
 
 declare -A SERVER_ARGS=(
