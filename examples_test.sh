@@ -49,10 +49,10 @@ pass () {
 }
 
 EXAMPLES=(
-    "helloworld"
-    "route_guide"
-    "features/authentication"
-    # "features/compression"
+    # "helloworld"
+    # "route_guide"
+    # "features/authentication"
+    "features/compression"
     # "features/deadline"
     # "features/encryption/TLS"
     # "features/errors"
