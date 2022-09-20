@@ -62,13 +62,16 @@ type routeGuideServer struct {
 // GetFeature returns the feature at the given point.
 func (s *routeGuideServer) GetFeature(ctx context.Context, point *pb.Point) (*pb.Feature, error) {
 
-    fmt.Println("routeGuideServer::GetFeature")
+    fmt.Println("routeGuideServer::GetFeature: 1")
 
 	for _, feature := range s.savedFeatures {
 		if proto.Equal(feature.Location, point) {
-			return feature, nil
+			fmt.Println("routeGuideServer::GetFeature: 2, end")
+            return feature, nil
 		}
 	}
+
+    fmt.Println("routeGuideServer::GetFeature: 3, end")
 	// No feature was found, return an unnamed feature
 	return &pb.Feature{Location: point}, nil
 }
@@ -76,7 +79,7 @@ func (s *routeGuideServer) GetFeature(ctx context.Context, point *pb.Point) (*pb
 // ListFeatures lists all features contained within the given bounding Rectangle.
 func (s *routeGuideServer) ListFeatures(rect *pb.Rectangle, stream pb.RouteGuide_ListFeaturesServer) error {
 
-    fmt.Println("routeGuideServer::ListFeatures")
+    fmt.Println("routeGuideServer::ListFeatures: 1")
 
 	for _, feature := range s.savedFeatures {
 		if inRange(feature.Location, rect) {
@@ -85,6 +88,8 @@ func (s *routeGuideServer) ListFeatures(rect *pb.Rectangle, stream pb.RouteGuide
 			}
 		}
 	}
+
+    fmt.Println("routeGuideServer::ListFeatures: 2, end")
 	return nil
 }
 
@@ -95,7 +100,7 @@ func (s *routeGuideServer) ListFeatures(rect *pb.Rectangle, stream pb.RouteGuide
 // total time spent.
 func (s *routeGuideServer) RecordRoute(stream pb.RouteGuide_RecordRouteServer) error {
 
-    fmt.Println("routeGuideServer::RecordRoute")
+    fmt.Println("routeGuideServer::RecordRoute: 1")
 
 	var pointCount, featureCount, distance int32
 	var lastPoint *pb.Point
@@ -125,6 +130,8 @@ func (s *routeGuideServer) RecordRoute(stream pb.RouteGuide_RecordRouteServer) e
 		}
 		lastPoint = point
 	}
+
+    // fmt.Println("routeGuideServer::RecordRoute: 2, end")
 }
 
 // RouteChat receives a stream of message/location pairs, and responds with a stream of all
