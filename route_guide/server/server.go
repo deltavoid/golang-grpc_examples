@@ -61,6 +61,9 @@ type routeGuideServer struct {
 
 // GetFeature returns the feature at the given point.
 func (s *routeGuideServer) GetFeature(ctx context.Context, point *pb.Point) (*pb.Feature, error) {
+
+    fmt.Println("routeGuideServer::GetFeature")
+
 	for _, feature := range s.savedFeatures {
 		if proto.Equal(feature.Location, point) {
 			return feature, nil
@@ -72,6 +75,9 @@ func (s *routeGuideServer) GetFeature(ctx context.Context, point *pb.Point) (*pb
 
 // ListFeatures lists all features contained within the given bounding Rectangle.
 func (s *routeGuideServer) ListFeatures(rect *pb.Rectangle, stream pb.RouteGuide_ListFeaturesServer) error {
+
+    fmt.Println("routeGuideServer::ListFeatures")
+
 	for _, feature := range s.savedFeatures {
 		if inRange(feature.Location, rect) {
 			if err := stream.Send(feature); err != nil {
@@ -88,6 +94,9 @@ func (s *routeGuideServer) ListFeatures(rect *pb.Rectangle, stream pb.RouteGuide
 // number of points,  number of known features visited, total distance traveled, and
 // total time spent.
 func (s *routeGuideServer) RecordRoute(stream pb.RouteGuide_RecordRouteServer) error {
+
+    fmt.Println("routeGuideServer::RecordRoute")
+
 	var pointCount, featureCount, distance int32
 	var lastPoint *pb.Point
 	startTime := time.Now()
@@ -121,6 +130,9 @@ func (s *routeGuideServer) RecordRoute(stream pb.RouteGuide_RecordRouteServer) e
 // RouteChat receives a stream of message/location pairs, and responds with a stream of all
 // previous messages at each of those locations.
 func (s *routeGuideServer) RouteChat(stream pb.RouteGuide_RouteChatServer) error {
+
+    fmt.Println("routeGuideServer::RouteChat")
+
 	for {
 		in, err := stream.Recv()
 		if err == io.EOF {
@@ -150,6 +162,8 @@ func (s *routeGuideServer) RouteChat(stream pb.RouteGuide_RouteChatServer) error
 
 // loadFeatures loads features from a JSON file.
 func (s *routeGuideServer) loadFeatures(filePath string) {
+
+    
 	var data []byte
 	if filePath != "" {
 		var err error
@@ -210,18 +224,23 @@ func serialize(point *pb.Point) string {
 }
 
 func newServer() *routeGuideServer {
+
 	s := &routeGuideServer{routeNotes: make(map[string][]*pb.RouteNote)}
-	s.loadFeatures(*jsonDBFile)
-	return s
+	
+    s.loadFeatures(*jsonDBFile)
+	
+    return s
 }
 
 func main() {
+
 	flag.Parse()
 	lis, err := net.Listen("tcp", fmt.Sprintf("localhost:%d", *port))
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
-	var opts []grpc.ServerOption
+
+    var opts []grpc.ServerOption
 	if *tls {
 		if *certFile == "" {
 			*certFile = data.Path("x509/server_cert.pem")
@@ -235,10 +254,28 @@ func main() {
 		}
 		opts = []grpc.ServerOption{grpc.Creds(creds)}
 	}
+
+
 	grpcServer := grpc.NewServer(opts...)
-	pb.RegisterRouteGuideServer(grpcServer, newServer())
-	grpcServer.Serve(lis)
+	
+    pb.RegisterRouteGuideServer(grpcServer, newServer())
+	
+    grpcServer.Serve(lis)
+
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
 
 // exampleData is a copy of testdata/route_guide_db.json. It's to avoid
 // specifying file path with `go run`.
